@@ -12,14 +12,19 @@ again: steps that are already done are skipped.
 | --- | --- |
 | Basics | Xcode Command Line Tools, Homebrew |
 | Git & GitHub | Git, GitHub CLI (`gh`), SSH key, sensible Git defaults |
-| Python | Python, [uv](https://docs.astral.sh/uv/), ruff, pytest, mypy, IPython |
-| Go | Go, gopls (language server), Delve (debugger), golangci-lint |
-| React / Node.js | Node.js LTS (via fnm), npm, pnpm |
-| Terminal tools | jq, ripgrep, fd, fzf, bat, tree, wget, htop, direnv, pre-commit, git-delta |
-| Apps | iTerm2, Sublime Text |
+| Languages | Latest Homebrew Python and Go; latest Node.js via fnm |
+| Python | [uv](https://docs.astral.sh/uv/), ruff, pytest, mypy, IPython |
+| Go | gopls (language server), Delve (debugger), golangci-lint |
+| React / Node.js | Node.js (latest release via fnm), npm, pnpm |
+| Developer CLIs | jq, make, Vim |
+| Terminal tools | Oh My Zsh, ripgrep, fd, fzf, bat, tree, wget, htop, direnv, pre-commit, git-delta |
+| Apps | VS Code, iTerm2, Postman, draw.io, Chrome, DaisyDisk, Claude |
 | VS Code | ESLint, Prettier and Tailwind CSS extensions (if the `code` command is available) |
 
 See [docs/TOOLS.md](docs/TOOLS.md) for what each tool does and how to use it.
+The full Xcode app and Keynote, Numbers, and Pages are left for manual
+installation through the App Store; Safari is included with macOS. DaisyDisk
+is installed by the script; activate it with your license.
 
 ## Requirements
 
@@ -75,7 +80,8 @@ Then skip to step 4 below. It's a good habit to
 
 ## What to expect while it runs
 
-The whole run usually takes 15–30 minutes. You'll be asked for input a few times:
+The run can take a while because it installs several large apps. You'll be
+asked for input a few times:
 
 1. **Xcode tools popup** (fresh Macs only). Click **Install** and wait for it to
    finish. The script stops here; run it again afterwards.
@@ -94,7 +100,7 @@ folder. Each change is added only once, so re-running is safe.
 | File | Change |
 | --- | --- |
 | `~/.zprofile` | Loads Homebrew |
-| `~/.zshrc` | Adds Go tools to your PATH and turns on direnv, fzf and fnm |
+| `~/.zshrc` | Loads Oh My Zsh, adds Go tools to your PATH, and turns on direnv, fzf and fnm |
 | `~/.gitconfig` | Your name and email; `main` as the default branch; delta for diffs; auto-set upstream on first push |
 | `~/.gitignore_global` | Ignores `.DS_Store`, `.env`, `.venv/`, `__pycache__/`, `*.pyc`, `.idea/` in every repo |
 | `~/.ssh/id_ed25519` | New SSH key (only if you don't have one) |
@@ -124,7 +130,7 @@ Also install the **React Developer Tools** extension in your browser.
 ```bash
 brew update && brew upgrade   # Homebrew packages and apps
 uv tool upgrade --all         # Python tools
-fnm install --lts             # newest Node.js LTS
+fnm install --latest          # newest Node.js release
 ```
 
 For Go tools, re-run the `go install ...@latest` lines from the script.

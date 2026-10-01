@@ -30,20 +30,30 @@ What each installed tool is for, with a quick example.
 | `dlv` | Debugger | `dlv debug` |
 | `golangci-lint` | Runs many Go linters at once | `golangci-lint run` |
 
+## Other developer tools
+
+| Tool | What it does | Try it |
+| --- | --- | --- |
+| `make` | Runs Makefile tasks | `make --version` |
+| `vim` | Terminal text editor | `vim` |
+
 ## React / Node.js
 
 | Tool | What it does | Try it |
 | --- | --- | --- |
-| `fnm` | Installs and switches Node.js versions; switches automatically in folders with a `.nvmrc` or `.node-version` file | `fnm list`, `fnm install 20` |
+| `fnm` | Installs and switches Node.js versions; switches automatically in folders with a `.nvmrc` or `.node-version` file | `fnm list`, `fnm install --latest` |
 | `node` / `npm` | Runs JavaScript; installs packages | `npm install`, `npm run dev` |
 | `pnpm` | Faster, disk-efficient alternative to npm | `pnpm install`, `pnpm dev` |
 
 New React app: `npm create vite@latest my-app -- --template react-ts`
+The setup selects the newest Node.js release. Projects that need a specific
+version can declare it in `.nvmrc` or `.node-version`.
 
 ## Terminal tools
 
 | Tool | What it does | Try it |
 | --- | --- | --- |
+| `oh-my-zsh` | Zsh framework for themes, plugins, and shell configuration | Edit `~/.zshrc` to choose a theme or plugins |
 | `rg` (ripgrep) | Search inside files, very fast | `rg "TODO"` |
 | `fd` | Find files by name | `fd config` |
 | `fzf` | Fuzzy finder | <kbd>Ctrl</kbd>+<kbd>R</kbd> searches history, <kbd>Ctrl</kbd>+<kbd>T</kbd> picks a file |
@@ -56,8 +66,17 @@ New React app: `npm create vite@latest my-app -- --template react-ts`
 
 ## Apps
 
+- **Visual Studio Code**: extensible source-code editor.
 - **iTerm2**: a more capable replacement for the built-in Terminal app (split panes, search, profiles).
-- **Sublime Text**: a fast, lightweight text editor.
+- **Postman**: API development and testing.
+- **draw.io**: diagrams and flowcharts.
+- **Google Chrome**: web browser.
+- **DaisyDisk**: disk-space visualization.
+- **Claude**: AI assistant desktop app.
+The script installs the latest versions provided by Homebrew rather than
+pinning the versions recorded in an inventory. Safari comes with macOS. Install
+the full Xcode app and Keynote, Numbers, and Pages manually through the App
+Store. DaisyDisk is installed by the script; activate it with your license.
 
 ## VS Code extensions
 

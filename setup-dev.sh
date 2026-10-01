@@ -20,20 +20,46 @@ eval "$($BREW shellenv)"
 if ! grep -q 'brew shellenv' "$HOME/.zprofile" 2>/dev/null; then
   echo "eval \"\$($BREW shellenv)\"" >> "$HOME/.zprofile"
 fi
+brew update
 
-echo "==> Git, GitHub CLI, Python (via uv), Go"
-brew install git gh go uv python
+echo "==> Git, GitHub CLI, Python (via uv), Go, and developer CLIs"
+FORMULAE=(
+  git gh go uv python fnm
+  jq ripgrep fd fzf bat tree wget htop direnv pre-commit golangci-lint git-delta
+  make vim
+)
+brew install "${FORMULAE[@]}"
+brew upgrade --formula "${FORMULAE[@]}"
 
-echo "==> Everyday CLI tools"
-# jq: JSON; ripgrep/fd: fast search; fzf: fuzzy finder; bat: better cat;
-# tree/wget/htop: basics; direnv: per-project env vars; pre-commit: git hooks;
-# golangci-lint: Go linter bundle; git-delta: nicer git diffs
-brew install jq ripgrep fd fzf bat tree wget htop direnv pre-commit golangci-lint git-delta
+echo "==> Apps"
+install_cask_if_missing() {
+  local cask="$1"
+  shift
 
-echo "==> Apps (iTerm2, Sublime Text)"
-# Skip apps already installed outside Homebrew, or brew would error
-[ -d "/Applications/iTerm.app" ] || brew install --cask iterm2
-[ -d "/Applications/Sublime Text.app" ] || brew install --cask sublime-text
+  if brew list --cask --versions "$cask" >/dev/null 2>&1; then
+    brew upgrade --cask "$cask"
+    return
+  fi
+
+  local app_path
+  for app_path in "$@"; do
+    if [ -d "$app_path" ]; then
+      echo "Already installed outside Homebrew: $app_path"
+      return
+    fi
+  done
+
+  brew install --cask "$cask"
+}
+
+install_cask_if_missing iterm2 "/Applications/iTerm.app"
+install_cask_if_missing visual-studio-code \
+  "/Applications/Visual Studio Code.app" "$HOME/Applications/Visual Studio Code.app"
+install_cask_if_missing postman "/Applications/Postman.app" "$HOME/Applications/Postman.app"
+install_cask_if_missing drawio "/Applications/draw.io.app" "/Applications/draw.io"
+install_cask_if_missing google-chrome "/Applications/Google Chrome.app"
+install_cask_if_missing daisydisk "/Applications/DaisyDisk.app"
+install_cask_if_missing claude "/Applications/Claude.app"
 
 echo "==> Git config"
 if [ -z "$(git config --global user.name || true)" ]; then
@@ -66,6 +92,18 @@ if ! grep -q 'UseKeychain' "$HOME/.ssh/config" 2>/dev/null; then
 fi
 ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" 2>/dev/null || true
 
+echo "==> Oh My Zsh"
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+elif [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+  echo "Found an incomplete Oh My Zsh install at $HOME/.oh-my-zsh." >&2
+  echo "Move it aside and re-run this script to install Oh My Zsh." >&2
+  exit 1
+fi
+if ! grep -Fq 'source "$ZSH/oh-my-zsh.sh"' "$HOME/.zshrc" 2>/dev/null; then
+  printf '\nexport ZSH="$HOME/.oh-my-zsh"\nsource "$ZSH/oh-my-zsh.sh"\n' >> "$HOME/.zshrc"
+fi
+
 echo "==> Shell hooks (direnv, fzf)"
 if ! grep -q 'direnv hook zsh' "$HOME/.zshrc" 2>/dev/null; then
   echo 'eval "$(direnv hook zsh)"' >> "$HOME/.zshrc"
@@ -84,22 +122,21 @@ go install golang.org/x/tools/gopls@latest
 go install github.com/go-delve/delve/cmd/dlv@latest
 
 echo "==> Python tools"
-uv tool install ruff
-uv tool install pytest
-uv tool install mypy
-uv tool install ipython
+uv tool install --upgrade ruff
+uv tool install --upgrade pytest
+uv tool install --upgrade mypy
+uv tool install --upgrade ipython
 uv tool update-shell || true
 
 echo "==> Node.js (via fnm) for React"
 # fnm manages Node versions; --use-on-cd switches versions per project (.nvmrc / .node-version)
-brew install fnm
 if ! grep -q 'fnm env' "$HOME/.zshrc" 2>/dev/null; then
   echo 'eval "$(fnm env --use-on-cd --shell zsh)"' >> "$HOME/.zshrc"
 fi
 eval "$(fnm env --shell bash)"
-fnm install --lts
-fnm default lts-latest
-fnm use lts-latest
+fnm install --latest
+fnm default latest
+fnm use latest
 # pnpm: fast package manager; start new React apps with `npm create vite@latest`
 npm install -g pnpm
 
